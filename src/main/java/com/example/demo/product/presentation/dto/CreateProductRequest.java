@@ -1,13 +1,24 @@
 package com.example.demo.product.presentation.dto;
 
 import java.math.BigDecimal;
+<<<<<<< codex/check-code-structure-against-design-requirements-2e8ixo
 
+=======
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+>>>>>>> main
 public class CreateProductRequest {
 
     private String productId;
     private String productName;
     private BigDecimal price;
     private Integer quantity;
+<<<<<<< codex/check-code-structure-against-design-requirements-2e8ixo
 
     public CreateProductRequest() {
     }
@@ -43,4 +54,6 @@ public class CreateProductRequest {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+=======
+>>>>>>> main
 }
