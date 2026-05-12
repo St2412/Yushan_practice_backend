@@ -4,41 +4,48 @@ import com.example.demo.common.exception.BusinessException;
 import com.example.demo.product.domain.Product;
 import com.example.demo.product.infrastructure.ProductRepository;
 import com.example.demo.product.presentation.dto.CreateProductRequest;
-<<<<<<< codex/check-code-structure-against-design-requirements-2e8ixo
-=======
 import lombok.RequiredArgsConstructor;
->>>>>>> main
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-<<<<<<< codex/check-code-structure-against-design-requirements-2e8ixo
-=======
 @RequiredArgsConstructor
->>>>>>> main
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-<<<<<<< codex/check-code-structure-against-design-requirements-2e8ixo
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
-=======
->>>>>>> main
     @Transactional
     public Product createProduct(CreateProductRequest request) {
-        if (productRepository.existsByProductId(request.getProductId())) {
-            throw new BusinessException("商品編號已存在");
+        try {
+            productRepository.createProductBySp(
+                    request.getProductId(),
+                    request.getProductName(),
+                    request.getPrice().intValueExact(),
+                    request.getQuantity());
+        } catch (ArithmeticException exception) {
+            throw new BusinessException("價格必須為整數");
+        } catch (DataAccessException exception) {
+            String message = exception.getMostSpecificCause() != null
+                    ? exception.getMostSpecificCause().getMessage()
+                    : exception.getMessage();
+
+            if (message != null && message.contains("INVALID_PRODUCT_ID")) {
+                throw new BusinessException("商品編號格式錯誤");
+            }
+            if (message != null && message.contains("INVALID_PRODUCT_NAME")) {
+                throw new BusinessException("商品名稱格式錯誤");
+            }
+            if (message != null && message.contains("INVALID_PRICE")) {
+                throw new BusinessException("價格必須大於 0");
+            }
+            if (message != null && message.contains("INVALID_QUANTITY")) {
+                throw new BusinessException("庫存不可小於 0");
+            }
+            throw new BusinessException("建立商品失敗");
         }
 
-        Product product = new Product(
-                request.getProductId(),
-                request.getProductName(),
-                request.getPrice(),
-                request.getQuantity());
-
-        return productRepository.save(product);
+        return productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new BusinessException("建立商品失敗"));
     }
 }
