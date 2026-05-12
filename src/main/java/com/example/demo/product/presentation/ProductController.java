@@ -1,9 +1,11 @@
-package com.example.demo.product;
+package com.example.demo.product.presentation;
 
-import java.util.Map;
+import com.example.demo.common.response.ApiResponse;
+import com.example.demo.product.application.ProductService;
+import com.example.demo.product.domain.Product;
+import com.example.demo.product.presentation.dto.CreateProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +21,7 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Product create(@RequestBody CreateProductRequest request) {
-        return productService.createProduct(request);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleIllegalArgumentException(IllegalArgumentException exception) {
-        return Map.of("message", exception.getMessage());
+    public ApiResponse<Product> create(@RequestBody CreateProductRequest request) {
+        return ApiResponse.success(productService.createProduct(request));
     }
 }

@@ -1,4 +1,4 @@
-package com.example.demo.product;
+package com.example.demo.product.presentation.dto;
 
 import java.math.BigDecimal;
 import lombok.Getter;
