@@ -1,5 +1,3 @@
-DELIMITER $$
-
 DROP PROCEDURE IF EXISTS sp_create_product $$
 
 CREATE PROCEDURE sp_create_product(
@@ -19,12 +17,12 @@ BEGIN
             SET MESSAGE_TEXT = 'INVALID_PRODUCT_NAME';
     END IF;
 
-    IF p_price <= 0 THEN
+    IF p_price IS NULL OR p_price <= 0 THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'INVALID_PRICE';
     END IF;
 
-    IF p_quantity < 0 THEN
+    IF p_quantity IS NULL OR p_quantity < 0 THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'INVALID_QUANTITY';
     END IF;
@@ -42,5 +40,3 @@ BEGIN
         p_quantity
     );
 END $$
-
-DELIMITER ;
