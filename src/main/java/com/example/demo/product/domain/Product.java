@@ -1,4 +1,4 @@
-package com.example.demo.product;
+package com.example.demo.product.domain;
 
 import java.math.BigDecimal;
 import jakarta.persistence.Column;
