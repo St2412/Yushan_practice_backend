@@ -51,7 +51,15 @@ public class OrderService {
             throw mapDataAccessException(exception);
         }
 
-        List<OrderPreviewItemResponse> items = orderRepository.previewOrder(itemsJson);
+        List<OrderPreviewItemResponse> items = orderRepository.previewOrder(itemsJson).stream()
+                .map(item -> new OrderPreviewItemResponse(
+                        orderId,
+                        item.productId(),
+                        item.productName(),
+                        item.quantity(),
+                        item.standPrice(),
+                        item.itemPrice()))
+                .toList();
         int totalPrice = items.stream().mapToInt(OrderPreviewItemResponse::itemPrice).sum();
         return new CreateOrderResponse(orderId, request.getMemberId(), 0, totalPrice, items);
     }
