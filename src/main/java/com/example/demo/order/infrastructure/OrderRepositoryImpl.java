@@ -29,7 +29,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         return jdbcTemplate.query(
                 "CALL sp_preview_order(?)",
                 (rs, rowNum) -> new OrderPreviewItemResponse(
-                        null,
                         rs.getString("product_id"),
                         rs.getString("product_name"),
                         rs.getInt("quantity"),
@@ -42,8 +41,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public List<OrderPreviewItemResponse> getMemberOrderItems(String memberId) {
         return jdbcTemplate.query(
                 """
-                SELECT od.order_id,
-                       od.product_id,
+                SELECT od.product_id,
                        p.product_name,
                        od.quantity,
                        od.stand_price,
@@ -55,7 +53,6 @@ public class OrderRepositoryImpl implements OrderRepository {
                 ORDER BY od.order_id, od.order_item_sn
                 """,
                 (rs, rowNum) -> new OrderPreviewItemResponse(
-                        rs.getString("order_id"),
                         rs.getString("product_id"),
                         rs.getString("product_name"),
                         rs.getInt("quantity"),
