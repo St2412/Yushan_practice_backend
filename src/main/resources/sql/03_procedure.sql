@@ -73,7 +73,7 @@ BEGIN
             COLUMNS (
                 product_id VARCHAR(20) PATH '$.productId',
                 quantity INT PATH '$.quantity'
-            ));
+            )) jt;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION

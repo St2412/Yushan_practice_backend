@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final DateTimeFormatter ORDER_ID_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    private static final DateTimeFormatter ORDER_ID_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
     private final OrderRepository orderRepository;
     private final ObjectMapper objectMapper;
@@ -38,7 +39,8 @@ public class OrderService {
 
     @Transactional
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
-        String orderId = "Ms" + LocalDateTime.now().format(ORDER_ID_FORMATTER);
+        String orderId = "Ms" + LocalDateTime.now().format(ORDER_ID_FORMATTER)
+                + ThreadLocalRandom.current().nextInt(100, 1000);
         String itemsJson = toItemsJson(request);
 
         try {
