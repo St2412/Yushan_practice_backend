@@ -53,7 +53,6 @@ public class OrderService {
 
         List<OrderPreviewItemResponse> items = orderRepository.previewOrder(itemsJson).stream()
                 .map(item -> new OrderPreviewItemResponse(
-                        orderId,
                         item.productId(),
                         item.productName(),
                         item.quantity(),
