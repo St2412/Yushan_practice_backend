@@ -68,12 +68,13 @@ BEGIN
     DECLARE v_total INT DEFAULT 0;
 
     DECLARE item_cursor CURSOR FOR
-        SELECT product_id, quantity
+        SELECT jt.product_id, SUM(jt.quantity) AS quantity
         FROM JSON_TABLE(p_items_json, '$[*]'
             COLUMNS (
                 product_id VARCHAR(20) PATH '$.productId',
                 quantity INT PATH '$.quantity'
-            ));
+            )) jt
+        GROUP BY jt.product_id;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -134,23 +135,31 @@ BEGIN
     INSERT INTO order_detail (order_id, product_id, quantity, stand_price, item_price)
     SELECT p_order_id,
            p.product_id,
-           j.quantity,
+           j.total_quantity,
            p.price,
-           p.price * j.quantity
-    FROM JSON_TABLE(p_items_json, '$[*]'
-        COLUMNS (
-            product_id VARCHAR(20) PATH '$.productId',
-            quantity INT PATH '$.quantity'
-        )) j
+           p.price * j.total_quantity
+    FROM (
+        SELECT jt.product_id, SUM(jt.quantity) AS total_quantity
+        FROM JSON_TABLE(p_items_json, '$[*]'
+            COLUMNS (
+                product_id VARCHAR(20) PATH '$.productId',
+                quantity INT PATH '$.quantity'
+            )) jt
+        GROUP BY jt.product_id
+    ) j
     JOIN product p ON p.product_id = j.product_id;
 
     UPDATE product p
-    JOIN JSON_TABLE(p_items_json, '$[*]'
-        COLUMNS (
-            product_id VARCHAR(20) PATH '$.productId',
-            quantity INT PATH '$.quantity'
-        )) j ON p.product_id = j.product_id
-    SET p.quantity = p.quantity - j.quantity;
+    JOIN (
+        SELECT jt.product_id, SUM(jt.quantity) AS total_quantity
+        FROM JSON_TABLE(p_items_json, '$[*]'
+            COLUMNS (
+                product_id VARCHAR(20) PATH '$.productId',
+                quantity INT PATH '$.quantity'
+            )) jt
+        GROUP BY jt.product_id
+    ) j ON p.product_id = j.product_id
+    SET p.quantity = p.quantity - j.total_quantity;
 
     COMMIT;
 END $$
