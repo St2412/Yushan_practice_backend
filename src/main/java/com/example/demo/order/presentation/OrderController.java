@@ -4,6 +4,7 @@ import com.example.demo.common.response.ApiResponse;
 import com.example.demo.order.application.OrderService;
 import com.example.demo.order.dto.CreateOrderRequest;
 import com.example.demo.order.dto.CreateOrderResponse;
+import com.example.demo.order.dto.OrderPreviewRequest;
 import com.example.demo.order.dto.OrderPreviewResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/preview")
-    public ApiResponse<OrderPreviewResponse> preview(@Valid @RequestBody CreateOrderRequest request) {
-        return ApiResponse.success(orderService.previewOrder(request));
+    public ApiResponse<OrderPreviewResponse> preview(@Valid @RequestBody OrderPreviewRequest request) {
+        return ApiResponse.success(orderService.previewOrder(request.memberId()));
     }
 
     @PostMapping

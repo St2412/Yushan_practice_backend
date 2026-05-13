@@ -10,5 +10,7 @@ public interface OrderRepository {
 
     List<OrderPreviewItemResponse> previewOrder(String itemsJson);
 
+    List<OrderPreviewItemResponse> getMemberOrderItems(String memberId);
+
     void createOrder(String orderId, String memberId, String itemsJson);
 }

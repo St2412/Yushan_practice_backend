@@ -28,13 +28,15 @@ public class OrderService {
     private final ObjectMapper objectMapper;
 
     public List<AvailableProductResponse> getAvailableProducts() {
-        return orderRepository.getAvailableProducts();
+        return orderRepository.getAvailableProducts().stream()
+                .filter(product -> product.quantity() != null && product.quantity() > 0)
+                .toList();
     }
 
-    public OrderPreviewResponse previewOrder(CreateOrderRequest request) {
-        List<OrderPreviewItemResponse> items = orderRepository.previewOrder(toItemsJson(request));
+    public OrderPreviewResponse previewOrder(String memberId) {
+        List<OrderPreviewItemResponse> items = orderRepository.getMemberOrderItems(memberId);
         int totalPrice = items.stream().mapToInt(OrderPreviewItemResponse::itemPrice).sum();
-        return new OrderPreviewResponse(request.getMemberId(), items, totalPrice);
+        return new OrderPreviewResponse(memberId, items, totalPrice);
     }
 
     @Transactional
