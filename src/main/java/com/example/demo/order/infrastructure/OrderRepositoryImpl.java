@@ -29,12 +29,39 @@ public class OrderRepositoryImpl implements OrderRepository {
         return jdbcTemplate.query(
                 "CALL sp_preview_order(?)",
                 (rs, rowNum) -> new OrderPreviewItemResponse(
+                        null,
                         rs.getString("product_id"),
                         rs.getString("product_name"),
                         rs.getInt("quantity"),
                         rs.getInt("stand_price"),
                         rs.getInt("item_price")),
                 itemsJson);
+    }
+
+    @Override
+    public List<OrderPreviewItemResponse> getMemberOrderItems(String memberId) {
+        return jdbcTemplate.query(
+                """
+                SELECT od.order_id,
+                       od.product_id,
+                       p.product_name,
+                       od.quantity,
+                       od.stand_price,
+                       od.item_price
+                FROM orders o
+                JOIN order_detail od ON o.order_id = od.order_id
+                JOIN product p ON p.product_id = od.product_id
+                WHERE o.member_id = ?
+                ORDER BY od.order_id, od.order_item_sn
+                """,
+                (rs, rowNum) -> new OrderPreviewItemResponse(
+                        rs.getString("order_id"),
+                        rs.getString("product_id"),
+                        rs.getString("product_name"),
+                        rs.getInt("quantity"),
+                        rs.getInt("stand_price"),
+                        rs.getInt("item_price")),
+                memberId);
     }
 
     @Override
