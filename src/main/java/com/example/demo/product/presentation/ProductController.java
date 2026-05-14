@@ -6,6 +6,7 @@ import com.example.demo.order.dto.AvailableProductResponse;
 import com.example.demo.product.application.ProductService;
 import com.example.demo.product.domain.Product;
 import com.example.demo.product.presentation.dto.CreateProductRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Product> create(@RequestBody CreateProductRequest request) {
+    public ApiResponse<Product> create(@Valid @RequestBody CreateProductRequest request) {
         return ApiResponse.success(productService.createProduct(request));
     }
 

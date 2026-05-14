@@ -3,6 +3,7 @@ package com.example.demo.order.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.Setter;
 public class OrderItemRequest {
 
     @NotBlank
+    @Pattern(regexp = "^[A-Za-z0-9_-]{1,50}$", message = "productId 格式錯誤")
     private String productId;
 
     @NotNull
