@@ -25,12 +25,23 @@ public class ProductController {
     private final ProductService productService;
     private final OrderService orderService;
 
+    /**
+     * 建立新商品資料。
+     *
+     * @param request 商品建立請求資料
+     * @return 包含建立完成商品的 API 回應
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Product> create(@Valid @RequestBody CreateProductRequest request) {
         return ApiResponse.success(productService.createProduct(request));
     }
 
+    /**
+     * 取得目前可購買（庫存大於 0）的商品清單。
+     *
+     * @return 可購買商品清單的 API 回應
+     */
     @GetMapping("/available")
     public ApiResponse<List<AvailableProductResponse>> getAvailableProducts() {
         return ApiResponse.success(orderService.getAvailableProducts());

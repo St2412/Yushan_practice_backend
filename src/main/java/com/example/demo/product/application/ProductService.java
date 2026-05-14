@@ -15,6 +15,13 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    /**
+     * 透過 Stored Procedure 建立商品，並將 DB 錯誤代碼映射為可讀的商業錯誤訊息。
+     *
+     * @param request 商品建立請求資料
+     * @return 建立完成且重新查詢後的商品資料
+     * @throws BusinessException 當輸入資料或資料庫操作不符合商業規則時拋出
+     */
     @Transactional
     public Product createProduct(CreateProductRequest request) {
         try {
